@@ -11,8 +11,10 @@ body {
   color: #f1f5f9;
   line-height: 1.5;
   padding: 20px;
+  /* hilangkan overflow-x:hidden agar halaman tidak kunci scroll */
 }
 
+/* GRID APP */
 .app {
   display: grid;
   grid-template-columns: 2fr 2fr 1fr;
@@ -33,15 +35,21 @@ body {
 
 /* WRAPPER PERIODIK */
 .periodic-wrapper {
-  overflow-x: auto;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;                 /* scroll hanya di area ini */
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch; /* biar smooth di HP */
   padding-bottom: 6px;
+  border-bottom: 2px solid #334155; /* biar area tabel jelas */
 }
 
+/* GRID TABEL PERIODIK */
 .periodic {
   display: grid;
   gap: 6px;
   justify-content: flex-start;
-  min-width: max-content;
+  min-width: max-content; /* biar bisa lebih lebar dari wrapper */
 }
 
 .el {
@@ -166,12 +174,14 @@ footer {
 @media (orientation: portrait) {
   .periodic {
     grid-template-columns: repeat(18, 60px);
+    min-width: calc(18 * 60px + 17 * 6px); /* paksa lebar > layar */
   }
 }
 
 @media (orientation: landscape) {
   .periodic {
     grid-template-columns: repeat(9, 60px);
+    min-width: auto;
   }
 
   #viz {
