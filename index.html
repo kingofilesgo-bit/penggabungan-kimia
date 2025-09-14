@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Visualisasi Reaksi Kimia</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <div class="card">
+      <header><h1>Tabel Periodik Lengkap</h1></header>
+      <div class="periodic" id="periodic"></div>
+    </div>
+
+    <div class="card canvas-wrap">
+      <div class="topbar">
+        <div><strong>Tabung Reaksi</strong></div>
+        <div class="controls">
+          <button class="btn" id="reactBtn">Reaksikan</button>
+          <button class="btn ghost" id="clearBtn">Bersihkan</button>
+        </div>
+      </div>
+      <canvas id="viz"></canvas>
+    </div>
+
+    <div class="card side">
+      <div><strong>Terpilih</strong>
+        <div class="selected-list" id="selectedList"></div>
+      </div>
+      <div>
+        <strong>Hasil Reaksi</strong>
+        <div class="results" id="resultText">Belum ada reaksi.</div>
+      </div>
+      <div>
+        <strong>Save Slots</strong>
+        <div class="slots">
+          <div class="slot" data-slot="1">Slot 1</div>
+          <div class="slot" data-slot="2">Slot 2</div>
+          <div class="slot" data-slot="3">Slot 3</div>
+        </div>
+      </div>
+      <footer>Semua kombinasi unsur dicek. Jika tidak ada reaksi, akan ditandai "tidak bereaksi".</footer>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
