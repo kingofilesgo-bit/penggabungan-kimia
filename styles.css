@@ -40,8 +40,9 @@ body {
 .periodic-wrapper {
   width:100%;
   max-width:100%;
-  overflow-x:auto;                  /* scroll hanya bila perlu */
-  -webkit-overflow-scrolling:touch; /* smooth di HP */
+  overflow-x:auto;                 /* geser horizontal */
+  overflow-y:hidden;
+  -webkit-overflow-scrolling:touch; /* smooth scroll di HP */
   padding-bottom:6px;
 }
 
@@ -49,8 +50,8 @@ body {
   display:grid;
   gap:6px;
   justify-content:flex-start;
-  min-width:max-content;            /* biar grid bisa lebih lebar dari layar */
-  grid-template-columns:repeat(18,60px); /* default: portrait */
+  min-width:calc(60px * 18 + 6px * 17); /* paksa lebar total grid */
+  grid-template-columns:repeat(18,60px); /* default portrait */
 }
 
 .el {
@@ -149,6 +150,9 @@ footer {
 /*  LANDSCAPE MODE       */
 /* ===================== */
 @media (orientation:landscape) {
-  .periodic { grid-template-columns:repeat(9,60px); }
+  .periodic { 
+    grid-template-columns:repeat(9,60px); 
+    min-width:auto; /* biar tidak paksa scroll di landscape */
+  }
   #viz { height:450px; }
 }
