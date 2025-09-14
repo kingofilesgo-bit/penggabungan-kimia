@@ -2,7 +2,8 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- aktifkan pinch zoom -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
   <title>Simulasi Reaksi Unsur</title>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -18,15 +19,16 @@
 
     <!-- Tabung Reaksi -->
     <div class="card canvas-wrap">
+      <header><h1>Tabung Reaksi</h1></header>
       <div class="topbar">
         <button id="reactBtn" class="btn">Reaksikan</button>
         <button id="clearBtn" class="btn ghost">Hapus</button>
       </div>
       <canvas id="viz"></canvas>
-      <footer>
+      <div class="legend">
         🟢 Hijau = ada reaksi <br>
         🔴 Merah = tidak bereaksi
-      </footer>
+      </div>
     </div>
 
     <!-- Panel Hasil -->
