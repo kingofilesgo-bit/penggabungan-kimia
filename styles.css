@@ -11,6 +11,7 @@ body {
   color: #f1f5f9;
   line-height: 1.5;
   padding: 20px;
+  overflow-x: hidden; /* cegah halaman ikut geser horizontal */
 }
 
 .app {
@@ -33,16 +34,18 @@ body {
 
 /* WRAPPER PERIODIK */
 .periodic-wrapper {
-  overflow-x: auto;
+  overflow-x: auto;                  /* hanya tabel yang bisa geser */
+  -webkit-overflow-scrolling: touch; /* geser mulus di HP */
   padding-bottom: 6px;
+  max-width: 100%;                   /* batasi lebar ke layar */
 }
 
 .periodic {
   display: grid;
   gap: 6px;
   justify-content: flex-start;
-  min-width: max-content;
-  grid-template-columns: repeat(9, 60px); /* default: landscape style */
+  min-width: max-content;            /* penting agar grid bisa lebar */
+  grid-template-columns: repeat(9, 60px); /* default: landscape */
 }
 
 .el {
@@ -166,6 +169,16 @@ footer {
 /* === Portrait vs Landscape === */
 @media (orientation: portrait) {
   .periodic {
-    grid-template-columns: repeat(18, 60px);
+    grid-template-columns: repeat(18, 60px); /* scroll kanan-kiri */
+  }
+}
+
+@media (orientation: landscape) {
+  .periodic {
+    grid-template-columns: repeat(9, 60px);  /* memanjang ke bawah */
+  }
+
+  #viz {
+    height: 450px; /* tabung lebih besar */
   }
 }
