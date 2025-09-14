@@ -18,6 +18,8 @@ body {
   display: grid;
   grid-template-columns: 2fr 2fr 1fr;
   gap: 16px;
+  max-width: 100%;     /* kunci grid agar tidak melebar */
+  overflow-x: hidden;  /* cegah geser selain periodic-wrapper */
 }
 
 .card {
@@ -35,16 +37,16 @@ body {
 /* WRAPPER PERIODIK */
 .periodic-wrapper {
   overflow-x: auto;                  /* hanya tabel yang bisa geser */
-  -webkit-overflow-scrolling: touch; /* geser mulus di HP */
+  -webkit-overflow-scrolling: touch; /* smooth scroll di HP */
   padding-bottom: 6px;
-  max-width: 100%;                   /* batasi lebar ke layar */
+  max-width: 100%;
 }
 
 .periodic {
   display: grid;
   gap: 6px;
   justify-content: flex-start;
-  min-width: max-content;            /* penting agar grid bisa lebar */
+  min-width: max-content;            /* biar grid bisa lebar */
   grid-template-columns: repeat(9, 60px); /* default: landscape */
 }
 
