@@ -8,7 +8,8 @@
 </head>
 <body>
   <div class="app">
-    <!-- Tabel Periodik -->
+
+    <!-- Panel Tabel Periodik -->
     <div class="card">
       <header><h1>Tabel Periodik</h1></header>
       <div class="periodic-wrapper">
@@ -16,30 +17,28 @@
       </div>
     </div>
 
-    <!-- Tabung Reaksi -->
+    <!-- Panel Tabung Reaksi -->
     <div class="card canvas-wrap">
+      <header><h1>Tabung Reaksi</h1></header>
       <div class="topbar">
         <button id="reactBtn" class="btn">Reaksikan</button>
-        <button id="clearBtn" class="btn ghost">Hapus</button>
+        <button id="clearBtn" class="btn ghost">Bersihkan</button>
       </div>
       <canvas id="viz"></canvas>
-      <footer>
-        🟢 Hijau = ada reaksi <br>
-        🔴 Merah = tidak bereaksi
-      </footer>
-    </div>
-
-    <!-- Panel Hasil -->
-    <div class="card">
-      <header><h1>Hasil Reaksi</h1></header>
-      <div id="selectedList" class="selected-list"></div>
       <div id="resultText" class="results">Belum ada reaksi.</div>
     </div>
+
+    <!-- Panel Unsur Terpilih -->
+    <div class="card">
+      <header><h1>Unsur Terpilih</h1></header>
+      <div id="selectedList" class="selected-list"></div>
+    </div>
+
   </div>
 
-  <!-- Efek Suara -->
-  <audio id="audioSuccess" src="success.mp3"></audio>
-  <audio id="audioFail" src="fail.mp3"></audio>
+  <footer>
+    © 2025 Simulasi Reaksi Unsur – dibuat untuk pembelajaran
+  </footer>
 
   <script src="script.js"></script>
 </body>
