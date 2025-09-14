@@ -1,4 +1,4 @@
-/* script.js - logika periodik & reaksi */
+/* script.js - logika periodik & reaksi + efek visual & audio */
 const elementData = [
     [1,"H","Hydrogen"],[2,"He","Helium"],[3,"Li","Lithium"],[4,"Be","Beryllium"],[5,"B","Boron"],[6,"C","Carbon"],[7,"N","Nitrogen"],[8,"O","Oxygen"],[9,"F","Fluorine"],[10,"Ne","Neon"],
     [11,"Na","Sodium"],[12,"Mg","Magnesium"],[13,"Al","Aluminium"],[14,"Si","Silicon"],[15,"P","Phosphorus"],[16,"S","Sulfur"],[17,"Cl","Chlorine"],[18,"Ar","Argon"],
@@ -17,6 +17,7 @@ const elementData = [
   const selectedList = document.getElementById('selectedList');
   const resultText = document.getElementById('resultText');
   
+  /* ============ RENDER PERIODIK ============ */
   function renderPeriodic(){
     elementData.forEach(([z,s,name])=>{
       const d = document.createElement('div');
@@ -50,7 +51,6 @@ const elementData = [
       node.innerHTML = `${el.s} — ${el.name} <button class='btn ghost' data-i='${i}'>x</button>`;
       node.querySelector('button').addEventListener('click', ()=>{
         selected.splice(i,1);
-        // remove highlight in periodic grid
         const gridItems = Array.from(periodicEl.children);
         const found = gridItems.find(n => n.querySelector('.sym')?.textContent === el.s);
         if(found) found.classList.remove('selected');
@@ -60,11 +60,18 @@ const elementData = [
     });
   }
   
-  /* Rules reaksi sederhana (bisa kamu perluas) */
+  /* ============ REAKSI REALISTIS ============ */
   const reactionRules = [
-    { match: ['H','O'], result: 'Hydrogen + Oxygen → H₂O' },
-    { match: ['Na','Cl'], result: 'Sodium + Chlorine → NaCl' },
-    { match: ['Fe','O'], result: 'Iron + Oxygen → Karat (Fe₂O₃)' }
+    { match: ['H','O'], result: '2H₂ + O₂ → 2H₂O (air)' },
+    { match: ['C','O'], result: 'C + O₂ → CO₂ (karbon dioksida)' },
+    { match: ['S','O'], result: 'S + O₂ → SO₂ (belerang dioksida)' },
+    { match: ['N','H'], result: 'N₂ + 3H₂ → 2NH₃ (amonia, proses Haber)' },
+    { match: ['Na','Cl'], result: '2Na + Cl₂ → 2NaCl (garam dapur)' },
+    { match: ['Fe','O'], result: '4Fe + 3O₂ → 2Fe₂O₃ (karat besi)' },
+    { match: ['Mg','O'], result: '2Mg + O₂ → 2MgO (magnesium oksida)' },
+    { match: ['Zn','H'], result: 'Zn + 2HCl → ZnCl₂ + H₂ (reaksi logam + asam)' },
+    { match: ['Ca','C','O'], result: 'CaO + CO₂ → CaCO₃ (kalsium karbonat, kapur)' },
+    { match: ['H','S'], result: 'H₂ + S → H₂S (hidrogen sulfida)' }
   ];
   
   function findReactionPair(a,b){
@@ -74,35 +81,7 @@ const elementData = [
     return null;
   }
   
-  document.getElementById('reactBtn').addEventListener('click', ()=>{
-    if(selected.length === 0){ 
-      resultText.textContent = 'Belum ada unsur terpilih.'; 
-      return; 
-    }
-    if(selected.length === 1){ 
-      resultText.textContent = 'Hanya 1 unsur, tidak ada reaksi.'; 
-      return; 
-    }
-  
-    const results = [];
-    for(let i=0;i<selected.length;i++){
-      for(let j=i+1;j<selected.length;j++){
-        const r = findReactionPair(selected[i].s, selected[j].s);
-        results.push(`${selected[i].s} + ${selected[j].s} → ${r ? r : "tidak bereaksi"}`);
-      }
-    }
-    resultText.textContent = results.join("\n");
-  });
-  
-  document.getElementById('clearBtn').addEventListener('click', ()=>{
-    selected.length = 0;
-    // clear selections visual
-    Array.from(periodicEl.children).forEach(ch => ch.classList.remove('selected'));
-    updateSelectedUI();
-    resultText.textContent = 'Belum ada reaksi.';
-  });
-  
-  /* Canvas basic resize (siap untuk ditambah visual efek) */
+  /* ============ CANVAS ============ */
   const canvas = document.getElementById('viz');
   const ctx = canvas.getContext && canvas.getContext('2d');
   
@@ -117,7 +96,6 @@ const elementData = [
   function drawPlaceholder(){
     if(!ctx) return;
     ctx.clearRect(0,0,canvas.width,canvas.height);
-    // simple decorative bubbles to hint "reaksi"
     const w = canvas.width / devicePixelRatio;
     const h = canvas.height / devicePixelRatio;
     ctx.save();
@@ -132,6 +110,95 @@ const elementData = [
     ctx.restore();
   }
   
+  /* ============ EFEK AUDIO ============ */
+  function playSound(success){
+    const audioSuccess = document.getElementById("audioSuccess");
+    const audioFail = document.getElementById("audioFail");
+    if(success){
+      audioSuccess.currentTime = 0;
+      audioSuccess.play();
+    } else {
+      audioFail.currentTime = 0;
+      audioFail.play();
+    }
+  }
+  
+  /* ============ EFEK VISUAL REAKSI ============ */
+  function playReactionEffect(success){
+    if(!ctx) return;
+    const w = canvas.width / devicePixelRatio;
+    const h = canvas.height / devicePixelRatio;
+  
+    let particles = [];
+    for(let i=0;i<35;i++){
+      particles.push({
+        x: w/2, y: h/2,
+        r: Math.random()*6+3,
+        dx: (Math.random()-0.5)*6,
+        dy: (Math.random()-0.5)*6,
+        life: 50
+      });
+    }
+  
+    function animate(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle = 'rgba(7,16,33,0.7)';
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+  
+      particles.forEach(p=>{
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fillStyle = success ? 'rgba(110,231,183,0.9)' : 'rgba(239,68,68,0.9)';
+        ctx.fill();
+        p.x += p.dx;
+        p.y += p.dy;
+        p.life--;
+      });
+      particles = particles.filter(p=>p.life>0);
+      if(particles.length>0) requestAnimationFrame(animate);
+      else drawPlaceholder();
+    }
+    animate();
+  }
+  
+  /* ============ EVENT ============ */
+  document.getElementById('reactBtn').addEventListener('click', ()=>{
+    if(selected.length === 0){ 
+      resultText.textContent = 'Belum ada unsur terpilih.'; 
+      playReactionEffect(false);
+      playSound(false);
+      return; 
+    }
+    if(selected.length === 1){ 
+      resultText.textContent = 'Hanya 1 unsur, tidak ada reaksi.'; 
+      playReactionEffect(false);
+      playSound(false);
+      return; 
+    }
+  
+    const results = [];
+    let adaReaksi = false;
+    for(let i=0;i<selected.length;i++){
+      for(let j=i+1;j<selected.length;j++){
+        const r = findReactionPair(selected[i].s, selected[j].s);
+        if(r) adaReaksi = true;
+        results.push(`${selected[i].s} + ${selected[j].s} → ${r ? r : "tidak bereaksi"}`);
+      }
+    }
+    resultText.textContent = results.join("\n");
+    playReactionEffect(adaReaksi);
+    playSound(adaReaksi);
+  });
+  
+  document.getElementById('clearBtn').addEventListener('click', ()=>{
+    selected.length = 0;
+    Array.from(periodicEl.children).forEach(ch => ch.classList.remove('selected'));
+    updateSelectedUI();
+    resultText.textContent = 'Belum ada reaksi.';
+    drawPlaceholder();
+  });
+  
+  /* ============ INIT ============ */
   window.addEventListener('resize', debounce(resizeCanvas, 120));
   renderPeriodic();
   resizeCanvas();
