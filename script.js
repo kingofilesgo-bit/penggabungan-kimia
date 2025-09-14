@@ -1,213 +1,124 @@
-/* script.js - logika periodik & reaksi + efek visual & audio */
+/* === DATA UNSUR (dipersingkat untuk contoh, bisa full) === */
 const elementData = [
-  [1,"H","Hydrogen"],[2,"He","Helium"],[3,"Li","Lithium"],[4,"Be","Beryllium"],[5,"B","Boron"],[6,"C","Carbon"],[7,"N","Nitrogen"],[8,"O","Oxygen"],[9,"F","Fluorine"],[10,"Ne","Neon"],
-  [11,"Na","Sodium"],[12,"Mg","Magnesium"],[13,"Al","Aluminium"],[14,"Si","Silicon"],[15,"P","Phosphorus"],[16,"S","Sulfur"],[17,"Cl","Chlorine"],[18,"Ar","Argon"],
-  [19,"K","Potassium"],[20,"Ca","Calcium"],[21,"Sc","Scandium"],[22,"Ti","Titanium"],[23,"V","Vanadium"],[24,"Cr","Chromium"],[25,"Mn","Manganese"],[26,"Fe","Iron"],[27,"Co","Cobalt"],[28,"Ni","Nickel"],[29,"Cu","Copper"],[30,"Zn","Zinc"],
-  [31,"Ga","Gallium"],[32,"Ge","Germanium"],[33,"As","Arsenic"],[34,"Se","Selenium"],[35,"Br","Bromine"],[36,"Kr","Krypton"],
-  [37,"Rb","Rubidium"],[38,"Sr","Strontium"],[39,"Y","Yttrium"],[40,"Zr","Zirconium"],[41,"Nb","Niobium"],[42,"Mo","Molybdenum"],[43,"Tc","Technetium"],[44,"Ru","Ruthenium"],[45,"Rh","Rhodium"],[46,"Pd","Palladium"],[47,"Ag","Silver"],[48,"Cd","Cadmium"],
-  [49,"In","Indium"],[50,"Sn","Tin"],[51,"Sb","Antimony"],[52,"Te","Tellurium"],[53,"I","Iodine"],[54,"Xe","Xenon"],
-  [55,"Cs","Cesium"],[56,"Ba","Barium"],[57,"La","Lanthanum"],[58,"Ce","Cerium"],[59,"Pr","Praseodymium"],[60,"Nd","Neodymium"],[61,"Pm","Promethium"],[62,"Sm","Samarium"],[63,"Eu","Europium"],[64,"Gd","Gadolinium"],[65,"Tb","Terbium"],[66,"Dy","Dysprosium"],[67,"Ho","Holmium"],[68,"Er","Erbium"],[69,"Tm","Thulium"],[70,"Yb","Ytterbium"],[71,"Lu","Lutetium"],
-  [72,"Hf","Hafnium"],[73,"Ta","Tantalum"],[74,"W","Tungsten"],[75,"Re","Rhenium"],[76,"Os","Osmium"],[77,"Ir","Iridium"],[78,"Pt","Platinum"],[79,"Au","Gold"],[80,"Hg","Mercury"],[81,"Tl","Thallium"],[82,"Pb","Lead"],[83,"Bi","Bismuth"],[84,"Po","Polonium"],[85,"At","Astatine"],[86,"Rn","Radon"],
-  [87,"Fr","Francium"],[88,"Ra","Radium"],[89,"Ac","Actinium"],[90,"Th","Thorium"],[91,"Pa","Protactinium"],[92,"U","Uranium"],[93,"Np","Neptunium"],[94,"Pu","Plutonium"],[95,"Am","Americium"],[96,"Cm","Curium"],[97,"Bk","Berkelium"],[98,"Cf","Californium"],[99,"Es","Einsteinium"],[100,"Fm","Fermium"],[101,"Md","Mendelevium"],[102,"No","Nobelium"],[103,"Lr","Lawrencium"],
-  [104,"Rf","Rutherfordium"],[105,"Db","Dubnium"],[106,"Sg","Seaborgium"],[107,"Bh","Bohrium"],[108,"Hs","Hassium"],[109,"Mt","Meitnerium"],[110,"Ds","Darmstadtium"],[111,"Rg","Roentgenium"],[112,"Cn","Copernicium"],[113,"Nh","Nihonium"],[114,"Fl","Flerovium"],[115,"Mc","Moscovium"],[116,"Lv","Livermorium"],[117,"Ts","Tennessine"],[118,"Og","Oganesson"]
+  [1,"H","Hydrogen"], [8,"O","Oxygen"], [11,"Na","Sodium"], [17,"Cl","Chlorine"],
+  [26,"Fe","Iron"], [20,"Ca","Calcium"], [6,"C","Carbon"],
+  [1,"H","Hydrogen"], [16,"S","Sulfur"]
 ];
 
+/* DOM Elemen */
 const periodicEl = document.getElementById('periodic');
 const selected = [];
 const selectedList = document.getElementById('selectedList');
 const resultText = document.getElementById('resultText');
+const canvas = document.getElementById('viz');
+const ctx = canvas.getContext('2d');
 
-/* ============ RENDER PERIODIK ============ */
+/* Audio */
+const audioSuccess = document.getElementById('audioSuccess');
+const audioFail = document.getElementById('audioFail');
+
+/* Render tabel periodik */
 function renderPeriodic(){
   elementData.forEach(([z,s,name])=>{
     const d = document.createElement('div');
     d.className = 'el';
     d.title = `${name} (${z})`;
     d.innerHTML = `<div class="sym">${s}</div><div style="font-size:9px">${z}</div>`;
-    d.addEventListener('click', ()=>{
-      toggleSelect({s,name}, d);
-    });
+    d.addEventListener('click', ()=> toggleSelect({s,name}, d));
     periodicEl.appendChild(d);
   });
 }
+renderPeriodic();
 
+/* Pilihan unsur */
 function toggleSelect(el, dom){
   const idx = selected.findIndex(x=>x.s===el.s);
-  if(idx >= 0){
-    selected.splice(idx,1);
-    dom?.classList.remove('selected');
-  } else {
-    selected.push(el);
-    dom?.classList.add('selected');
-  }
+  if(idx>=0){ selected.splice(idx,1); dom.classList.remove('selected'); }
+  else { selected.push(el); dom.classList.add('selected'); }
   updateSelectedUI();
 }
 
 function updateSelectedUI(){
   selectedList.innerHTML = '';
   selected.forEach((el,i)=>{
-    const node = document.createElement('div'); 
+    const node = document.createElement('div');
     node.className='sel-item';
-    node.innerHTML = `${el.s} — ${el.name} <button class='btn ghost' data-i='${i}'>x</button>`;
+    node.innerHTML = `${el.s} — ${el.name} <button class='btn ghost'>x</button>`;
     node.querySelector('button').addEventListener('click', ()=>{
       selected.splice(i,1);
-      const gridItems = Array.from(periodicEl.children);
-      const found = gridItems.find(n => n.querySelector('.sym')?.textContent === el.s);
-      if(found) found.classList.remove('selected');
+      Array.from(periodicEl.children).forEach(ch=>{
+        if(ch.querySelector('.sym').textContent===el.s) ch.classList.remove('selected');
+      });
       updateSelectedUI();
     });
     selectedList.appendChild(node);
   });
 }
 
-/* ============ REAKSI REALISTIS ============ */
+/* Aturan reaksi realistis */
 const reactionRules = [
-  { match: ['H','O'], result: '2H₂ + O₂ → 2H₂O (air)' },
-  { match: ['C','O'], result: 'C + O₂ → CO₂ (karbon dioksida)' },
-  { match: ['S','O'], result: 'S + O₂ → SO₂ (belerang dioksida)' },
-  { match: ['N','H'], result: 'N₂ + 3H₂ → 2NH₃ (amonia, proses Haber)' },
-  { match: ['Na','Cl'], result: '2Na + Cl₂ → 2NaCl (garam dapur)' },
-  { match: ['Fe','O'], result: '4Fe + 3O₂ → 2Fe₂O₃ (karat besi)' },
-  { match: ['Mg','O'], result: '2Mg + O₂ → 2MgO (magnesium oksida)' },
-  { match: ['Zn','H'], result: 'Zn + 2HCl → ZnCl₂ + H₂ (reaksi logam + asam)' },
-  { match: ['Ca','C','O'], result: 'CaO + CO₂ → CaCO₃ (kalsium karbonat, kapur)' },
-  { match: ['H','S'], result: 'H₂ + S → H₂S (hidrogen sulfida)' }
+  { match:['H','O'], result:'2H₂ + O₂ → 2H₂O' },
+  { match:['Na','Cl'], result:'Na + Cl → NaCl' },
+  { match:['Fe','O'], result:'4Fe + 3O₂ → 2Fe₂O₃ (Karat)' },
+  { match:['Ca','C','O'], result:'CaO + CO₂ → CaCO₃' },
+  { match:['C','O'], result:'C + O₂ → CO₂' },
+  { match:['H','Cl','Na','O'], result:'HCl + NaOH → NaCl + H₂O' }
 ];
 
-function findReactionPair(a,b){
+/* Cari reaksi */
+function findReaction(elements){
   for(const r of reactionRules){
-    if(r.match.includes(a) && r.match.includes(b)) return r.result;
+    if(r.match.every(m=>elements.includes(m))) return r.result;
   }
   return null;
 }
 
-/* ============ CANVAS ============ */
-const canvas = document.getElementById('viz');
-const ctx = canvas.getContext && canvas.getContext('2d');
-
-function resizeCanvas(){
-  const rect = canvas.getBoundingClientRect();
-  canvas.width = Math.floor(rect.width * devicePixelRatio);
-  canvas.height = Math.floor(rect.height * devicePixelRatio);
-  if(ctx) ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
-  drawPlaceholder();
-}
-
-function drawPlaceholder(){
-  if(!ctx) return;
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  const w = canvas.width / devicePixelRatio;
-  const h = canvas.height / devicePixelRatio;
-  ctx.save();
-  ctx.globalAlpha = 0.08;
-  for(let i=0;i<30;i++){
-    const x = Math.random()*w, y = Math.random()*h, r = Math.random()*30+6;
+/* Efek visual bubble */
+function drawEffect(success){
+  const w=canvas.width, h=canvas.height;
+  ctx.clearRect(0,0,w,h);
+  for(let i=0;i<40;i++){
+    const x=Math.random()*w, y=Math.random()*h, r=Math.random()*20+5;
     ctx.beginPath();
-    ctx.fillStyle = 'rgba(110,231,183,0.6)';
+    ctx.fillStyle = success ? 'rgba(34,197,94,0.6)' : 'rgba(239,68,68,0.6)';
     ctx.arc(x,y,r,0,Math.PI*2);
     ctx.fill();
   }
-  ctx.restore();
 }
 
-/* ============ EFEK AUDIO ============ */
-function playSound(success){
-  const audioSuccess = document.getElementById("audioSuccess");
-  const audioFail = document.getElementById("audioFail");
-  if(success){
-    audioSuccess.currentTime = 0;
+/* Tombol Reaksikan */
+document.getElementById('reactBtn').addEventListener('click', ()=>{
+  if(selected.length<2){
+    resultText.textContent='Pilih minimal 2 unsur.';
+    return;
+  }
+  const elems = selected.map(s=>s.s);
+  const res = findReaction(elems);
+  if(res){
+    resultText.textContent=res;
+    drawEffect(true);
     audioSuccess.play();
-  } else {
-    audioFail.currentTime = 0;
+  }else{
+    resultText.textContent='Tidak bereaksi.';
+    drawEffect(false);
     audioFail.play();
   }
-}
-
-/* ============ EFEK VISUAL REAKSI ============ */
-function playReactionEffect(success){
-  if(!ctx) return;
-  const w = canvas.width / devicePixelRatio;
-  const h = canvas.height / devicePixelRatio;
-
-  let particles = [];
-  for(let i=0;i<35;i++){
-    particles.push({
-      x: w/2, y: h/2,
-      r: Math.random()*6+3,
-      dx: (Math.random()-0.5)*6,
-      dy: (Math.random()-0.5)*6,
-      life: 50
-    });
-  }
-
-  function animate(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle = 'rgba(7,16,33,0.7)';
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-
-    particles.forEach(p=>{
-      ctx.beginPath();
-      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-      ctx.fillStyle = success ? 'rgba(110,231,183,0.9)' : 'rgba(239,68,68,0.9)';
-      ctx.fill();
-      p.x += p.dx;
-      p.y += p.dy;
-      p.life--;
-    });
-    particles = particles.filter(p=>p.life>0);
-    if(particles.length>0) requestAnimationFrame(animate);
-    else drawPlaceholder();
-  }
-  animate();
-}
-
-/* ============ EVENT ============ */
-document.getElementById('reactBtn').addEventListener('click', ()=>{
-  if(selected.length === 0){ 
-    resultText.textContent = 'Belum ada unsur terpilih.'; 
-    playReactionEffect(false);
-    playSound(false);
-    return; 
-  }
-  if(selected.length === 1){ 
-    resultText.textContent = 'Hanya 1 unsur, tidak ada reaksi.'; 
-    playReactionEffect(false);
-    playSound(false);
-    return; 
-  }
-
-  const results = [];
-  let adaReaksi = false;
-  for(let i=0;i<selected.length;i++){
-    for(let j=i+1;j<selected.length;j++){
-      const r = findReactionPair(selected[i].s, selected[j].s);
-      if(r) adaReaksi = true;
-      results.push(`${selected[i].s} + ${selected[j].s} → ${r ? r : "tidak bereaksi"}`);
-    }
-  }
-  resultText.textContent = results.join("\n");
-  playReactionEffect(adaReaksi);
-  playSound(adaReaksi);
 });
 
+/* Tombol Hapus */
 document.getElementById('clearBtn').addEventListener('click', ()=>{
-  selected.length = 0;
-  Array.from(periodicEl.children).forEach(ch => ch.classList.remove('selected'));
+  selected.length=0;
+  Array.from(periodicEl.children).forEach(ch=>ch.classList.remove('selected'));
   updateSelectedUI();
-  resultText.textContent = 'Belum ada reaksi.';
-  drawPlaceholder();
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  resultText.textContent='Belum ada reaksi.';
 });
 
-/* ============ INIT ============ */
-window.addEventListener('resize', debounce(resizeCanvas, 120));
-renderPeriodic();
-resizeCanvas();
-
-/* util */
-function debounce(fn, t){
-  let timer = null;
-  return (...args) => {
-    clearTimeout(timer);
-    timer = setTimeout(()=>fn(...args), t);
-  };
+/* Resize canvas */
+function resizeCanvas(){
+  canvas.width=canvas.clientWidth*devicePixelRatio;
+  canvas.height=canvas.clientHeight*devicePixelRatio;
+  ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
 }
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
