@@ -1,17 +1,12 @@
 /* RESET */
-* { 
-  margin:0; 
-  padding:0; 
-  box-sizing:border-box; 
-  font-family:system-ui,sans-serif; 
-}
+* { margin:0; padding:0; box-sizing:border-box; font-family:system-ui,sans-serif; }
 
 body {
   background:#0f172a;
   color:#f1f5f9;
   line-height:1.5;
   padding:20px;
-  overflow-x:hidden; /* cegah halaman ikut geser */
+  overflow-x:hidden; /* cegah seluruh halaman geser */
 }
 
 .app {
@@ -29,10 +24,7 @@ body {
   box-shadow:0 4px 10px rgba(0,0,0,.3);
 }
 
-.card header h1 { 
-  font-size:20px; 
-  margin-bottom:10px; 
-}
+.card header h1 { font-size:20px; margin-bottom:10px; }
 
 /* ===================== */
 /*  PERIODIC WRAPPER     */
@@ -40,7 +32,7 @@ body {
 .periodic-wrapper {
   width:100%;
   max-width:100%;
-  overflow-x:auto;                 /* geser horizontal */
+  overflow-x:auto;                  /* geser horizontal */
   overflow-y:hidden;
   -webkit-overflow-scrolling:touch; /* smooth scroll di HP */
   padding-bottom:6px;
@@ -50,22 +42,15 @@ body {
   display:grid;
   gap:6px;
   justify-content:flex-start;
-  min-width:calc(60px * 18 + 6px * 17); /* paksa lebar total grid */
   grid-template-columns:repeat(18,60px); /* default portrait */
+  min-width:calc(18 * 60px + 17 * 6px);  /* paksa lebih lebar dari layar */
 }
 
 .el {
-  width:60px; 
-  height:50px; 
-  background:#334155; 
-  border-radius:6px;
-  text-align:center; 
-  cursor:pointer;
+  width:60px; height:50px; background:#334155; border-radius:6px;
+  text-align:center; cursor:pointer;
   transition:transform .2s, background .2s;
-  display:flex; 
-  flex-direction:column; 
-  align-items:center; 
-  justify-content:center;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
 }
 .el .sym { font-weight:bold; font-size:16px; }
 .el:hover { background:#475569; transform:scale(1.05); }
@@ -76,54 +61,27 @@ body {
 /* ===================== */
 .canvas-wrap { display:flex; flex-direction:column; }
 .topbar { display:flex; justify-content:space-between; margin-bottom:8px; }
-#viz { 
-  width:100%; 
-  height:320px; 
-  border-radius:12px; 
-  background:#0f172a; 
-  margin-bottom:8px; 
-}
+#viz { width:100%; height:320px; border-radius:12px; background:#0f172a; margin-bottom:8px; }
 
 /* ===================== */
 /*  PANEL SELEKSI        */
 /* ===================== */
-.selected-list { 
-  margin-top:6px; 
-  display:flex; 
-  flex-direction:column; 
-  gap:4px; 
-}
+.selected-list { margin-top:6px; display:flex; flex-direction:column; gap:4px; }
 .sel-item {
-  background:#334155; 
-  padding:4px 6px; 
-  border-radius:6px;
-  font-size:14px; 
-  display:flex; 
-  justify-content:space-between; 
-  align-items:center;
+  background:#334155; padding:4px 6px; border-radius:6px;
+  font-size:14px; display:flex; justify-content:space-between; align-items:center;
 }
 .results {
-  margin-top:6px; 
-  padding:8px; 
-  background:#0f172a; 
-  border-radius:6px;
-  min-height:80px; 
-  font-size:14px; 
-  white-space:pre-line;
+  margin-top:6px; padding:8px; background:#0f172a; border-radius:6px;
+  min-height:80px; font-size:14px; white-space:pre-line;
 }
 
 /* ===================== */
 /*  BUTTONS              */
 /* ===================== */
 .btn {
-  background:#22c55e; 
-  color:white; 
-  border:none; 
-  padding:6px 12px;
-  border-radius:6px; 
-  cursor:pointer; 
-  font-size:14px; 
-  transition:background .2s;
+  background:#22c55e; color:white; border:none; padding:6px 12px;
+  border-radius:6px; cursor:pointer; font-size:14px; transition:background .2s;
 }
 .btn:hover { background:#16a34a; }
 .btn.ghost { background:transparent; border:1px solid #64748b; color:#cbd5e1; }
@@ -132,27 +90,20 @@ body {
 /* ===================== */
 /*  FOOTER               */
 /* ===================== */
-footer { 
-  margin-top:10px; 
-  font-size:12px; 
-  color:#94a3b8; 
-  line-height:1.4; 
-}
+footer { margin-top:10px; font-size:12px; color:#94a3b8; line-height:1.4; }
 
 /* ===================== */
 /*  RESPONSIVE           */
 /* ===================== */
-@media (max-width:900px) { 
-  .app { grid-template-columns:1fr; } 
-}
+@media (max-width:900px) { .app { grid-template-columns:1fr; } }
 
 /* ===================== */
 /*  LANDSCAPE MODE       */
 /* ===================== */
 @media (orientation:landscape) {
   .periodic { 
-    grid-template-columns:repeat(9,60px); 
-    min-width:auto; /* biar tidak paksa scroll di landscape */
+    grid-template-columns:repeat(9,60px);
+    min-width:auto; /* jangan paksa scroll di landscape */
   }
   #viz { height:450px; }
 }
