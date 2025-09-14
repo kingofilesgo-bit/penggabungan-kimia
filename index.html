@@ -3,16 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Visualisasi Reaksi Kimia</title>
+  <title>Simulasi Reaksi Unsur</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="app">
+    <!-- TABEL PERIODIK -->
     <div class="card">
-      <header><h1>Tabel Periodik Lengkap</h1></header>
+      <header><h1>Tabel Periodik Unsur</h1></header>
       <div class="periodic" id="periodic"></div>
     </div>
 
+    <!-- TABUNG REAKSI -->
     <div class="card canvas-wrap">
       <div class="topbar">
         <div><strong>Tabung Reaksi</strong></div>
@@ -22,27 +24,33 @@
         </div>
       </div>
       <canvas id="viz"></canvas>
+      <div id="particleInfo" style="text-align:center; margin-top:6px; font-size:13px; color:#6ee7b7;">
+        Tidak ada partikel.
+      </div>
+      <div id="particleLegend" style="text-align:center; margin-top:4px; font-size:12px; color:#94a3b8;">
+        🔴 Merah = Tidak ada reaksi | 🟢 Hijau = Ada reaksi
+      </div>
     </div>
 
+    <!-- HASIL REAKSI -->
     <div class="card side">
-      <div><strong>Terpilih</strong>
+      <div>
+        <strong>Terpilih</strong>
         <div class="selected-list" id="selectedList"></div>
       </div>
       <div>
         <strong>Hasil Reaksi</strong>
         <div class="results" id="resultText">Belum ada reaksi.</div>
       </div>
-      <div>
-        <strong>Save Slots</strong>
-        <div class="slots">
-          <div class="slot" data-slot="1">Slot 1</div>
-          <div class="slot" data-slot="2">Slot 2</div>
-          <div class="slot" data-slot="3">Slot 3</div>
-        </div>
-      </div>
-      <footer>Semua kombinasi unsur dicek. Jika tidak ada reaksi, akan ditandai "tidak bereaksi".</footer>
+      <footer>
+        Klik unsur di tabel untuk memilih. Jika ada reaksi, tabung akan menampilkan efek hijau + suara pop.
+      </footer>
     </div>
   </div>
+
+  <!-- AUDIO -->
+  <audio id="audioSuccess" src="success.mp3" preload="auto"></audio>
+  <audio id="audioFail" src="fail.mp3" preload="auto"></audio>
 
   <script src="script.js"></script>
 </body>
